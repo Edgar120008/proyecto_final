@@ -1,61 +1,139 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# SHIP - Sistema de Horarios e Información de Profesores
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+## Descripción 📋
 
-## About Laravel
+SHIP es un sistema de información web desarrollado para la ESCOM que permite a los alumnos consultar los horarios de clase y atención de los profesores. El sistema incluye:
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+- Módulo de consulta para alumnos
+- Módulo de administración para gestión de datos
+- API RESTful desarrollada con Node.js, Express y Sequelize
+- Base de datos MySQL
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## Requisitos Previos 📦
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+- Node.js (v14 o superior)
+- MySQL (v5.7 o superior)
+- Postman (para probar los endpoints)
 
-## Learning Laravel
+## Instalación 🚀
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+1. Clonar el repositorio:
+   ```bash
+   git clone [url-del-repositorio]
+   cd ship-api
+   ```
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+2. Instalar dependencias:
+   ```bash
+   npm install
+   ```
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+3. Configurar la base de datos:
+   - Ejecutar el script SQL proporcionado en `script_bd.sql`
+   - O usar Sequelize para crear la estructura:
+     ```bash
+     npx sequelize-cli db:create
+     npx sequelize-cli db:migrate
+     npx sequelize-cli db:seed:all
+     ```
 
-## Laravel Sponsors
+4. Configurar variables de entorno:
+   Crear un archivo `.env` en la raíz del proyecto con:
+   ```
+   DB_USER=root
+   DB_PASSWORD=RooT1234
+   DB_NAME=ship_database
+   DB_HOST=localhost
+   JWT_SECRET=Ja1M3_SecretKey
+   PORT=3000
+   ```
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+5. Iniciar el servidor:
+   ```bash
+   npm run dev
+   ```
 
-### Premium Partners
+## Estructura de la Base de Datos 🗄️
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+```sql
+CREATE DATABASE IF NOT EXISTS ship_database;
+USE ship_database;
 
-## Contributing
+-- Tabla de Usuarios
+CREATE TABLE IF NOT EXISTS Users (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    username VARCHAR(50) NOT NULL UNIQUE,
+    password VARCHAR(255) NOT NULL,
+    email VARCHAR(100) NOT NULL UNIQUE,
+    role ENUM('admin', 'student') NOT NULL DEFAULT 'student',
+    createdAt DATETIME NOT NULL,
+    updatedAt DATETIME NOT NULL
+) ENGINE=InnoDB;
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+-- Tabla de Profesores
+CREATE TABLE IF NOT EXISTS Professors (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    email VARCHAR(100) NOT NULL UNIQUE,
+    department VARCHAR(100) NOT NULL,
+    createdAt DATETIME NOT NULL,
+    updatedAt DATETIME NOT NULL
+) ENGINE=InnoDB;
 
-## Code of Conduct
+-- Tabla de Horarios de Clase
+CREATE TABLE IF NOT EXISTS Schedules (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    day ENUM('Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado') NOT NULL,
+    startTime TIME NOT NULL,
+    endTime TIME NOT NULL,
+    classroom VARCHAR(50) NOT NULL,
+    subject VARCHAR(100) NOT NULL,
+    professorId INT NOT NULL,
+    createdAt DATETIME NOT NULL,
+    updatedAt DATETIME NOT NULL,
+    FOREIGN KEY (professorId) REFERENCES Professors(id) ON DELETE CASCADE
+) ENGINE=InnoDB;
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+-- Tabla de Horarios de Atención
+CREATE TABLE IF NOT EXISTS OfficeHours (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    day ENUM('Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado') NOT NULL,
+    startTime TIME NOT NULL,
+    endTime TIME NOT NULL,
+    location VARCHAR(100) NOT NULL,
+    professorId INT NOT NULL,
+    createdAt DATETIME NOT NULL,
+    updatedAt DATETIME NOT NULL,
+    FOREIGN KEY (professorId) REFERENCES Professors(id) ON DELETE CASCADE
+) ENGINE=InnoDB;
 
-## Security Vulnerabilities
+-- Usuario para la aplicación
+CREATE USER IF NOT EXISTS 'ship_user'@'localhost' IDENTIFIED BY 'ship_password';
+GRANT ALL PRIVILEGES ON ship_database.* TO 'ship_user'@'localhost';
+FLUSH PRIVILEGES;
+```
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+## Endpoints de la API 🌐
 
-## License
+Consulta el archivo [API_DOCUMENTATION.md](API_DOCUMENTATION.md) para la documentación completa de los endpoints disponibles.
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+## Datos Iniciales 🌱
+
+El sistema incluye datos de prueba que se cargan automáticamente:
+
+- **Usuarios:**
+  - Admin: `username: admin`, `password: password123`
+  - Estudiante: `username: student1`, `password: password123`
+
+- **Profesores:** 4 profesores con sus respectivos horarios
+
+## Configuración Recomendada ⚙️
+
+Para desarrollo, se recomienda:
+
+1. Usar `sync({ force: true })` en la primera ejecución
+2. Luego cambiar a `sync({ alter: true })` para desarrollo
+3. En producción, usar migraciones manuales:
+   ```bash
+   npx sequelize-cli db:migrate
+   ```
