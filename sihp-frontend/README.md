@@ -1,96 +1,97 @@
-SIHP - Sistema de Información de Horarios de Profesores (Frontend)
-Este proyecto es la interfaz de usuario (frontend) para el Sistema de Información de Horarios de Profesores (SIHP). Está construido con React y utiliza Vite como entorno de desarrollo. La aplicación permite a dos tipos de usuarios (administradores y estudiantes) interactuar con un sistema de gestión de horarios.
+# README - Aplicación React con Vite
 
-Características Principales
-Autenticación por Roles: Sistema de login que diferencia entre usuarios admin y student.
+## Descripción
+Este proyecto es una aplicación frontend construida con React y Vite que se conecta a un backend local en `http://127.0.0.1:3000`.
 
-Rutas Protegidas: Cada rol tiene acceso únicamente a las secciones que le corresponden.
+## Requisitos previos
+- Node.js (versión 16 o superior recomendada)
+- npm o yarn (se recomienda npm v7+ o yarn v1.22+)
+- Backend ejecutándose en `http://127.0.0.1:3000`
 
-Vista de Estudiante: Permite a los estudiantes buscar profesores y consultar sus horarios de clase y de atención de manera eficiente.
+## Instalación
 
-Vista de Administrador: Un panel completo para realizar operaciones CRUD (Crear, Leer, Actualizar, Eliminar) sobre:
+1. Clona el repositorio:
+```bash
+git clone [URL_DEL_REPOSITORIO]
+```
 
-Profesores
+2. Navega al directorio del proyecto:
+```bash
+cd [NOMBRE_DEL_DIRECTORIO]
+```
 
-Horarios de Clase
-
-Horarios de Atención
-
-Interfaz Responsiva: Diseñada con Bootstrap para funcionar correctamente en dispositivos móviles, tabletas y computadoras de escritorio.
-
-Comunicación Asíncrona: Todas las interacciones con la base de datos se realizan a través de una API REST, sin recargar la página.
-
-Requisitos Previos
-Para ejecutar este proyecto, necesitarás tener instalado lo siguiente en tu sistema:
-
-Node.js y npm: Puedes descargarlo desde nodejs.org.
-
-El Servidor Backend: Este proyecto es solo el frontend y requiere que el backend esté funcionando para poder autenticarse y obtener los datos.
-
-Guía de Instalación y Ejecución
-Sigue estos pasos para poner en marcha el proyecto en tu máquina local.
-
-1. Configurar el Backend
-Antes de iniciar el frontend, asegúrate de que el servidor del backend esté iniciado y escuchando en la siguiente dirección:
-
-[http://127.0.0.1:3000](http://127.0.0.1:3000)
-
-Si tu backend corre en una dirección o puerto diferente, deberás actualizarlo en el archivo de configuración del frontend (ver paso 3).
-
-2. Clonar y Preparar el Frontend
-Abre tu terminal y ejecuta los siguientes comandos:
-
-# 1. Clona (o descarga y descomprime) el repositorio en tu máquina
-# git clone [URL_DEL_REPOSITORIO]
-
-# 2. Navega al directorio del proyecto
-cd sihp-frontend
-
-# 3. Instala todas las dependencias necesarias del proyecto
+3. Instala las dependencias:
+```bash
 npm install
+# o
+yarn install
+```
 
-3. Verificar la Conexión con la API
-El frontend se conectará a la API del backend. La URL base está configurada en el siguiente archivo:
+## Configuración
 
-src/api/apiService.js
+El proyecto ya está configurado para conectarse al backend en `http://127.0.0.1:3000`. Si necesitas cambiar esta configuración:
 
-Abre este archivo y verifica que la baseURL coincida con la dirección de tu servidor backend. Por defecto, está configurada así:
+1. Crea un archivo `.env` en la raíz del proyecto basado en `.env.example` (si existe)
+2. Modifica la variable de entorno:
+```env
+VITE_API_URL=http://127.0.0.1:3000
+```
 
-const apiClient = axios.create({
-  baseURL: '[http://127.0.0.1:3000/api](http://127.0.0.1:3000/api)',
-});
+## Ejecución
 
-Si tu backend está en otro puerto (por ejemplo, 8080), ajústalo aquí.
+Para iniciar la aplicación en modo desarrollo:
 
-4. Ejecutar el Servidor de Desarrollo
-Una vez que las dependencias estén instaladas y el backend esté corriendo, inicia el servidor de desarrollo de Vite:
-
+```bash
 npm run dev
+# o
+yarn dev
+```
 
-Esto iniciará la aplicación en modo de desarrollo. Abre tu navegador y visita la URL que te indique la terminal (generalmente http://localhost:5173).
+La aplicación estará disponible en [http://localhost:5173](http://localhost:5173) (o el puerto que indique Vite al iniciar).
 
-Scripts Disponibles
-En el directorio del proyecto, puedes ejecutar los siguientes comandos:
+## Construcción para producción
 
-npm run dev: Inicia la aplicación en modo de desarrollo.
+Para crear una versión optimizada para producción:
 
-npm run build: Compila la aplicación para producción en la carpeta dist.
+```bash
+npm run build
+# o
+yarn build
+```
 
-npm run lint: Ejecuta el linter para revisar la calidad del código.
+Los archivos de producción se generarán en la carpeta `dist/`.
 
-npm run preview: Sirve localmente la versión de producción que se encuentra en la carpeta dist.
+## Estructura del proyecto
 
-Tecnologías Utilizadas
-Framework: React
+```
+/
+├── public/          # Archivos estáticos
+├── src/             # Código fuente
+│   ├── assets/      # Recursos (imágenes, fuentes, etc.)
+│   ├── components/  # Componentes React
+│   ├── pages/       # Páginas/views
+│   ├── services/    # Lógica para conectar con el backend
+│   ├── App.jsx      # Componente principal
+│   └── main.jsx     # Punto de entrada
+├── .env.example     # Ejemplo de variables de entorno
+├── vite.config.js   # Configuración de Vite
+└── package.json     # Dependencias y scripts
+```
 
-Herramientas de Build: Vite
+## Conexión con el backend
 
-Estilos: React-Bootstrap & Bootstrap 5
+La aplicación está configurada para hacer peticiones al backend en `http://127.0.0.1:3000`. Asegúrate de que:
 
-Enrutamiento: React Router DOM
+1. El backend esté en ejecución antes de iniciar el frontend
+2. El backend tenga configurado CORS para aceptar peticiones del frontend
 
-Peticiones HTTP: Axios
+## Solución de problemas
 
-Iconos: Lucide React
+Si tienes problemas de conexión con el backend:
+1. Verifica que el backend esté corriendo
+2. Revisa la consola del navegador para ver errores de CORS
+3. Asegúrate de que no haya conflictos de puertos
 
-Manejo de JWT: jwt-decode
+## Licencia
+
+[MIT](LICENSE) (o especifica tu licencia aquí)
