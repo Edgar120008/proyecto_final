@@ -10,9 +10,9 @@ const login = async (req, res) => {
       return res.status(401).send({ error: 'Credenciales inválidas.' });
     }
 
-    const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET, {
-      expiresIn: '8h'
-    });
+   const token = jwt.sign({ id: user.id, role: user.role, username: user.username }, process.env.JWT_SECRET, {
+  expiresIn: '8h'
+  });
 
     res.send({ user, token });
   } catch (error) {

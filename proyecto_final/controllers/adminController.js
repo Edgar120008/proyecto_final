@@ -123,6 +123,34 @@ const deleteOfficeHour = async (req, res) => {
   }
 };
 
+// Agrega estas funciones al final del archivo
+const getProfessorSchedules = async (req, res) => {
+  try {
+    const professorId = req.params.professorId;
+    const schedules = await Schedule.findAll({
+      where: { professorId },
+      attributes: ['id', 'day', 'startTime', 'endTime', 'classroom', 'subject']
+    });
+    res.send(schedules);
+  } catch (error) {
+    res.status(500).send(error);
+  }
+};
+
+const getProfessorOfficeHours = async (req, res) => {
+  try {
+    const professorId = req.params.professorId;
+    const officeHours = await OfficeHour.findAll({
+      where: { professorId },
+      attributes: ['id', 'day', 'startTime', 'endTime', 'location']
+    });
+    res.send(officeHours);
+  } catch (error) {
+    res.status(500).send(error);
+  }
+};
+
+// Asegúrate de exportar las nuevas funciones
 module.exports = {
   createProfessor,
   getAllProfessors,
@@ -133,5 +161,7 @@ module.exports = {
   deleteSchedule,
   createOfficeHour,
   updateOfficeHour,
-  deleteOfficeHour
+  deleteOfficeHour,
+  getProfessorSchedules,
+  getProfessorOfficeHours
 };
