@@ -113,10 +113,6 @@ GRANT ALL PRIVILEGES ON ship_database.* TO 'ship_user'@'localhost';
 FLUSH PRIVILEGES;
 ```
 
-## Endpoints de la API 🌐
-
-Consulta el archivo [API_DOCUMENTATION.md](API_DOCUMENTATION.md) para la documentación completa de los endpoints disponibles.
-
 ## Datos Iniciales 🌱
 
 El sistema incluye datos de prueba que se cargan automáticamente:
