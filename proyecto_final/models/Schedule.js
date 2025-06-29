@@ -26,6 +26,14 @@ module.exports = (sequelize) => {
     subject: {
       type: DataTypes.STRING,
       allowNull: false
+    },
+    groupId: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      references: {
+        model: 'Groups',
+        key: 'id'
+      }
     }
   });
 
