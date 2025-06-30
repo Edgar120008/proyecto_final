@@ -2,12 +2,13 @@ import { Routes, Route } from 'react-router-dom';
 import LoginPage from './pages/LoginPage.jsx';
 import StudentDashboard from './pages/student/StudentDashboard.jsx';
 import ViewSchedules from './pages/student/ViewSchedules.jsx';
-import GroupSchedule from './pages/student/GroupSchedule.jsx';
-import RequestAppointment from './pages/student/RequestAppointment.jsx';
+import StudentAppointments from './pages/student/StudentAppointments.jsx'; // Nuevo
 import AdminDashboard from './pages/admin/AdminDashboard.jsx';
 import ManageProfessors from './pages/admin/ManageProfessors.jsx';
-import ManageStudentsGroups from './pages/admin/ManageStudentsGroups.jsx';
+import ManageStudents from './pages/admin/ManageStudents.jsx'; // Nuevo
+import ManageGroups from './pages/admin/ManageGroups.jsx'; // Nuevo
 import ProtectedRoute from './components/ProtectedRoute.jsx';
+import SchedulePDF from './pages/student/SchedulePDF.jsx';
 import { AuthProvider } from './hooks/useAuth.jsx';
 
 function App() {
@@ -17,6 +18,7 @@ function App() {
         {/* Rutas Públicas */}
         <Route path="/login" element={<LoginPage />} />
         <Route path="/" element={<LoginPage />} />
+
         {/* Rutas Protegidas para Alumnos */}
         <Route
           path="/alumno"
@@ -35,21 +37,22 @@ function App() {
           }
         />
         <Route
-          path="/alumno/horario-grupo"
+          path="/alumno/mis-citas"
           element={
             <ProtectedRoute allowedRoles={['student']}>
-              <GroupSchedule />
+              <StudentAppointments />
             </ProtectedRoute>
           }
         />
         <Route
-          path="/alumno/solicitar-cita"
+          path="/alumno/horario/pdf"
           element={
             <ProtectedRoute allowedRoles={['student']}>
-              <RequestAppointment />
+              <SchedulePDF />
             </ProtectedRoute>
           }
         />
+
         {/* Rutas Protegidas para Administradores */}
         <Route
           path="/admin"
@@ -68,13 +71,22 @@ function App() {
           }
         />
         <Route
-          path="/admin/gestionar-estudiantes-grupos"
+          path="/admin/gestionar-alumnos"
           element={
             <ProtectedRoute allowedRoles={['admin']}>
-              <ManageStudentsGroups />
+              <ManageStudents />
             </ProtectedRoute>
           }
         />
+        <Route
+          path="/admin/gestionar-grupos"
+          element={
+            <ProtectedRoute allowedRoles={['admin']}>
+              <ManageGroups />
+            </ProtectedRoute>
+          }
+        />
+        
         {/* Ruta para cualquier otra URL no definida */}
         <Route path="*" element={<div className="text-center mt-5"><h1>404 Not Found</h1></div>} />
       </Routes>

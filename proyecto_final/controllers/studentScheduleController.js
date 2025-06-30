@@ -136,8 +136,106 @@ const downloadSchedulePDF = async (req, res) => {
   }
 };
 
+
+const getStudentAppointments = async (req, res) => {
+  try {
+    const appointments = await Appointment.findAll({
+      where: { studentId: req.user.id },
+      include: [
+        {
+          model: Professor,
+          attributes: ['id', 'name', 'department']
+        }
+      ],
+      order: [['date', 'ASC'], ['startTime', 'ASC']]
+    });
+    res.send(appointments);
+  } catch (error) {
+    res.status(500).send(error);
+  }
+};
+
+const updateAppointment = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { date, startTime, endTime, reason } = req.body;
+    
+    const appointment = await Appointment.findOne({
+      where: { 
+        id,
+        studentId: req.user.id 
+      }
+    });
+
+    if (!appointment) {
+      return res.status(404).send({ error: 'Cita no encontrada' });
+    }
+
+    // Verificar disponibilidad si se cambia el horario
+    if (date || startTime || endTime) {
+      const checkDate = date || appointment.date;
+      const checkStart = startTime || appointment.startTime;
+      const checkEnd = endTime || appointment.endTime;
+
+      const existingAppointment = await Appointment.findOne({
+        where: {
+          professorId: appointment.professorId,
+          date: checkDate,
+          id: { [Op.ne]: id },
+          [Op.or]: [
+            {
+              startTime: { [Op.lt]: checkEnd },
+              endTime: { [Op.gt]: checkStart }
+            }
+          ]
+        }
+      });
+
+      if (existingAppointment) {
+        return res.status(400).send({ error: 'El profesor ya tiene una cita en ese horario' });
+      }
+    }
+
+    await appointment.update({
+      date: date || appointment.date,
+      startTime: startTime || appointment.startTime,
+      endTime: endTime || appointment.endTime,
+      reason: reason || appointment.reason
+    });
+
+    res.send(appointment);
+  } catch (error) {
+    res.status(400).send(error);
+  }
+};
+
+const deleteAppointment = async (req, res) => {
+  try {
+    const { id } = req.params;
+    
+    const appointment = await Appointment.findOne({
+      where: { 
+        id,
+        studentId: req.user.id 
+      }
+    });
+
+    if (!appointment) {
+      return res.status(404).send({ error: 'Cita no encontrada' });
+    }
+
+    await appointment.destroy();
+    res.send({ message: 'Cita cancelada correctamente' });
+  } catch (error) {
+    res.status(500).send(error);
+  }
+};
+
 module.exports = {
-  getGroupSchedule,
-  createAppointment,
-  downloadSchedulePDF
+    getGroupSchedule,
+    downloadSchedulePDF,
+    getStudentAppointments,
+    createAppointment,
+    updateAppointment,
+    deleteAppointment
 };

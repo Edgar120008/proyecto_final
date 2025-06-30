@@ -2,14 +2,21 @@ import Navbar from './Navbar.jsx';
 import Footer from './Footer.jsx';
 import { Container } from 'react-bootstrap';
 
-// Componente de layout para las páginas de estudiante
 const StudentLayout = ({ children }) => {
   return (
-    <div className="d-flex flex-column min-vh-100 bg-light">
+    <div className="d-flex flex-column min-vh-100">
+      {/*
+        ERROR CORREGIDO: Antes decía role="admin".
+        Esto es crucial para que se muestren los enlaces correctos del estudiante.
+      */}
       <Navbar role="student" />
-      <main className="flex-grow-1">
-        <Container className="my-4">
-            {children}
+      <main className="flex-grow-1 py-4">
+        {/*
+          CAMBIO CLAVE: Mismo cambio que en AdminLayout.
+          Se eliminan las clases de padding horizontal `px-` del Container.
+        */}
+        <Container>
+          {children}
         </Container>
       </main>
       <Footer />
@@ -17,5 +24,4 @@ const StudentLayout = ({ children }) => {
   );
 };
 
-// LA CORRECCIÓN CLAVE ES USAR "export default" AQUÍ
 export default StudentLayout;
